@@ -3,70 +3,37 @@
 using BinaryBuilder
 
 name = "SDPABuilder"
-version = v"7.3.8"
+version = v"7.1.3"
 
 # Collection of sources required to build SDPABuilder
 sources = [
-    "https://sourceforge.net/projects/sdpa/files/sdpa/sdpa_7.3.8.tar.gz" =>
-    "c7541333da2f0bb2d18e90dbf758ac7cc099f3f7da3f256b284b0725f96d4117",
+    "https://sourceforge.net/projects/sdpa/files/sdpa-gmp/sdpa-gmp-7.1.3.src.20150320.tar.gz" =>
+    "65591cfba18afe710508023cd0c4a9d36ca8c56a7dd312d1cf4fc962c7b90df4",
     "./bundled"
 ]
 
 # Bash recipe for building across all platforms
 script = raw"""
 cd $WORKSPACE/srcdir
-cd sdpa-7.3.8/
-update_configure_scripts
 
-for path in ${LD_LIBRARY_PATH//:/ }; do
-    for file in $(ls $path/*.la); do
-        echo "$file"
-        baddir=$(sed -n "s|libdir=||p" $file)
-        sed -i~ -e "s|$baddir|'$path'|g" $file
-    done
-done
-if [ $target = "x86_64-apple-darwin14" ]; then
-  # seems static linking requires apple's ar
-  export AR=/opt/x86_64-apple-darwin14/bin/x86_64-apple-darwin14-ar
-fi
+## Extract GMP binary
 
-## First build SDPA
+mkdir gmp
+cd gmp
+tar xvfz ../0c90ba39a431553fbe58cf277adef5cead2f344247393828c113b8a997e595e8-GMP.v6.1.2.x86_64-linux-gnu.tar.gz
 
-patch -p1 < $WORKSPACE/srcdir/patches/shared.diff
-mv configure.in configure.ac
-patch -p1 < $WORKSPACE/srcdir/patches/lt_init.diff
-autoreconf -i
+## Compile SDPA-GMP
 
+cd $WORKSPACE/srcdir/sdpa-gmp-7.1.3/
 
-./configure --prefix=$prefix --host=${target}  lt_cv_deplibs_check_method=pass_all \
---with-blas="-L${prefix}/lib -lcoinblas -lgfortran -lcoinmumps -lcoinmetis" \
---with-lapack="-L${prefix}/lib -lcoinlapack -lcoinmumps -lcoinmetis" \
---with-mumps-libs="-L${prefix}/lib -lcoinmumps -lcoinmetis" --with-mumps-include="-I$prefix/include/coin/ThirdParty"
+CXXFLAGS="-I$WORKSPACE/srcdir/gmp/include"; export CXXFLAGS
+CPPFLAGS="-I$WORKSPACE/srcdir/gmp/include"; export CPPFLAGS
+CFLAGS="-I$WORKSPACE/srcdir/gmp/include"; export CFLAGS
+LDFLAGS="-L$WORKSPACE/srcdir/gmp/lib"; export LDFLAGS
+
+./configure --prefix=$prefix --host=$target
 
 make
-make install
-
-## Then build the libcxxwrap-julia wrapper
-
-cd $WORKSPACE/srcdir
-cd sdpawrap
-
-mkdir build
-cd build
-if [[ $target == i686-* ]] || [[ $target == arm-* ]]; then
-    export processor=pentium4
-else
-    export processor=x86-64
-fi
-
-cmake -DCMAKE_INSTALL_PREFIX=$prefix -DCMAKE_TOOLCHAIN_FILE=/opt/$target/$target.toolchain -DSDPA_DIR=$prefix -DMUMPS_INCLUDE_DIR="$prefix/include/coin/ThirdParty" \
--DCMAKE_FIND_ROOT_PATH=$prefix -DJulia_PREFIX=$prefix  -DSDPA_LIBRARY="-lsdpa" -DCMAKE_CXX_FLAGS="-march=$processor" \
--D_GLIBCXX_USE_CXX11_ABI=1 ..
-cmake --build . --config Release --target install
-
-if [[ $target == *w64-mingw32* ]] ; then
-    cp $WORKSPACE/destdir/lib/libsdpawrap.dll $WORKSPACE/destdir/bin
-fi
 """
 
 
@@ -74,27 +41,28 @@ fi
 # and hence will not work with the official binaries for windows (which uses gcc4)
 
 platforms = Platform[
-    MacOS(:x86_64, compiler_abi=CompilerABI(:gcc7)),
-    MacOS(:x86_64, compiler_abi=CompilerABI(:gcc8)),
+    # MacOS(:x86_64, compiler_abi=CompilerABI(:gcc7)),
+    # MacOS(:x86_64, compiler_abi=CompilerABI(:gcc8)),
     Linux(:x86_64, compiler_abi=CompilerABI(:gcc7, :cxx11)),
     Linux(:x86_64, compiler_abi=CompilerABI(:gcc8, :cxx11)),
 ]
 
 # The products that we will ensure are always built
 products(prefix) = [
-    ExecutableProduct(prefix, "sdpa", :sdpa),
-    LibraryProduct(prefix, "libsdpa", :libsdpa),
-    LibraryProduct(prefix, "libsdpawrap", :libsdpawrap)
+    ExecutableProduct(prefix, "sdpa_gmp", :sdpa_gmp),
+    # LibraryProduct(prefix, "libsdpa", :libsdpa),
+    # LibraryProduct(prefix, "libsdpawrap", :libsdpawrap)
 ]
 
 # Dependencies that must be installed before this package can be built
 dependencies = [
-    "https://github.com/JuliaOpt/COINBLASBuilder/releases/download/v1.4.6-1-static/build_COINBLASBuilder.v1.4.6.jl",
-    "https://github.com/JuliaOpt/COINLapackBuilder/releases/download/v1.5.6-1-static/build_COINLapackBuilder.v1.5.6.jl",
-    "https://github.com/JuliaOpt/COINMetisBuilder/releases/download/v1.3.5-1-static/build_COINMetisBuilder.v1.3.5.jl",
-    "https://github.com/JuliaOpt/COINMumpsBuilder/releases/download/v1.6.0-1-static-nm/build_COINMumpsBuilder.v1.6.0.jl",
-    "https://github.com/JuliaInterop/libcxxwrap-julia/releases/download/v0.5.1/build_libcxxwrap-julia-1.0.v0.5.1.jl",
-    "https://github.com/JuliaPackaging/JuliaBuilder/releases/download/v1.0.0-2/build_Julia.v1.0.0.jl"
+    "https://github.com/JuliaPackaging/Yggdrasil/releases/download/GMP-v6.1.2-1/build_GMP.v6.1.2.jl",
+    # "https://github.com/JuliaOpt/COINBLASBuilder/releases/download/v1.4.6-1-static/build_COINBLASBuilder.v1.4.6.jl",
+    # "https://github.com/JuliaOpt/COINLapackBuilder/releases/download/v1.5.6-1-static/build_COINLapackBuilder.v1.5.6.jl",
+    # "https://github.com/JuliaOpt/COINMetisBuilder/releases/download/v1.3.5-1-static/build_COINMetisBuilder.v1.3.5.jl",
+    # "https://github.com/JuliaOpt/COINMumpsBuilder/releases/download/v1.6.0-1-static-nm/build_COINMumpsBuilder.v1.6.0.jl",
+    # "https://github.com/JuliaInterop/libcxxwrap-julia/releases/download/v0.5.1/build_libcxxwrap-julia-1.0.v0.5.1.jl",
+    # "https://github.com/JuliaPackaging/JuliaBuilder/releases/download/v1.0.0-2/build_Julia.v1.0.0.jl"
 ]
 
 # Build the tarballs, and possibly a `build.jl` as well.
