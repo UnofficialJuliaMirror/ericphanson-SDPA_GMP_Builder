@@ -21,7 +21,7 @@ CPPFLAGS="-I$prefix/include"; export CPPFLAGS
 CFLAGS="-I$prefix/include"; export CFLAGS
 LDFLAGS="-L$prefix/lib"; export LDFLAGS
 
-./configure --prefix=$prefix --host=$target --with-gmp-libdir=$prefix/lib --with-gmp-includedir=$prefix/include
+./configure --prefix=$prefix --host=$target --enable-shared
 
 make
 """
