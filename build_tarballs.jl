@@ -31,8 +31,8 @@ make
 # and hence will not work with the official binaries for windows (which uses gcc4)
 
 platforms = Platform[
-    # MacOS(:x86_64, compiler_abi=CompilerABI(:gcc7)),
-    # MacOS(:x86_64, compiler_abi=CompilerABI(:gcc8)),
+    MacOS(:x86_64, compiler_abi=CompilerABI(:gcc7)),
+    MacOS(:x86_64, compiler_abi=CompilerABI(:gcc8)),
     Linux(:x86_64, compiler_abi=CompilerABI(:gcc7, :cxx11)),
     Linux(:x86_64, compiler_abi=CompilerABI(:gcc8, :cxx11)),
 ]
