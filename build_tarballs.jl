@@ -16,14 +16,33 @@ sources = [
 script = raw"""
 cd $WORKSPACE/srcdir/sdpa-gmp-7.1.3/
 
+update_configure_scripts
+
+for path in ${LD_LIBRARY_PATH//:/ }; do
+    for file in $(ls $path/*.la); do
+        echo "$file"
+        baddir=$(sed -n "s|libdir=||p" $file)
+        sed -i~ -e "s|$baddir|'$path'|g" $file
+    done
+done
+
+if [ $target = "x86_64-apple-darwin14" ]; then
+  # seems static linking requires apple's ar
+  export AR=/opt/x86_64-apple-darwin14/bin/x86_64-apple-darwin14-ar
+fi
+
+patch -p1 < $WORKSPACE/srcdir/patches/lt_init_gmp.diff
+mv configure.in configure.ac
+autoreconf -i
+
 CXXFLAGS="-I$prefix/include"; export CXXFLAGS
 CPPFLAGS="-I$prefix/include"; export CPPFLAGS
 CFLAGS="-I$prefix/include"; export CFLAGS
 LDFLAGS="-L$prefix/lib"; export LDFLAGS
 
-./configure --prefix=$prefix --host=$target --enable-shared
+./configure --prefix=$prefix --host=$target --with-gmp-includedir=$prefix/include --with-gmp-libdir=$prefix/lib --disable-shared
 
-make
+make -j6
 
 mkdir $prefix/bin
 cp sdpa_gmp $prefix/bin/sdpa_gmp
