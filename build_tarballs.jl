@@ -16,20 +16,14 @@ sources = [
 script = raw"""
 cd $WORKSPACE/srcdir
 
-## Extract GMP binary
-
-mkdir gmp
-cd gmp
-tar xvfz ../0c90ba39a431553fbe58cf277adef5cead2f344247393828c113b8a997e595e8-GMP.v6.1.2.x86_64-linux-gnu.tar.gz
-
 ## Compile SDPA-GMP
 
 cd $WORKSPACE/srcdir/sdpa-gmp-7.1.3/
 
-CXXFLAGS="-I$WORKSPACE/srcdir/gmp/include"; export CXXFLAGS
-CPPFLAGS="-I$WORKSPACE/srcdir/gmp/include"; export CPPFLAGS
-CFLAGS="-I$WORKSPACE/srcdir/gmp/include"; export CFLAGS
-LDFLAGS="-L$WORKSPACE/srcdir/gmp/lib"; export LDFLAGS
+CXXFLAGS="-I$prefix/include"; export CXXFLAGS
+CPPFLAGS="-I$prefix/include"; export CPPFLAGS
+CFLAGS="-I$prefix/include"; export CFLAGS
+LDFLAGS="-L$prefix/lib"; export LDFLAGS
 
 ./configure --prefix=$prefix --host=$target
 
