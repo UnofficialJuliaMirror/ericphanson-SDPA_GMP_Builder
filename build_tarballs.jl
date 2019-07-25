@@ -24,6 +24,10 @@ LDFLAGS="-L$prefix/lib"; export LDFLAGS
 ./configure --prefix=$prefix --host=$target --enable-shared
 
 make
+
+mkdir $prefix/bin
+cp sdpa_gmp $prefix/bin/sdpa_gmp
+cp COPYING $prefix/bin/COPYING
 """
 
 
@@ -31,8 +35,8 @@ make
 # and hence will not work with the official binaries for windows (which uses gcc4)
 
 platforms = Platform[
-    MacOS(:x86_64, compiler_abi=CompilerABI(:gcc7)),
-    MacOS(:x86_64, compiler_abi=CompilerABI(:gcc8)),
+    # MacOS(:x86_64, compiler_abi=CompilerABI(:gcc7)),
+    # MacOS(:x86_64, compiler_abi=CompilerABI(:gcc8)),
     Linux(:x86_64, compiler_abi=CompilerABI(:gcc7, :cxx11)),
     Linux(:x86_64, compiler_abi=CompilerABI(:gcc8, :cxx11)),
 ]
