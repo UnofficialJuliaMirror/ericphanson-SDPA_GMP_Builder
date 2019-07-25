@@ -14,10 +14,6 @@ sources = [
 
 # Bash recipe for building across all platforms
 script = raw"""
-cd $WORKSPACE/srcdir
-
-## Compile SDPA-GMP
-
 cd $WORKSPACE/srcdir/sdpa-gmp-7.1.3/
 
 CXXFLAGS="-I$prefix/include"; export CXXFLAGS
@@ -25,7 +21,7 @@ CPPFLAGS="-I$prefix/include"; export CPPFLAGS
 CFLAGS="-I$prefix/include"; export CFLAGS
 LDFLAGS="-L$prefix/lib"; export LDFLAGS
 
-./configure --prefix=$prefix --host=$target
+./configure --prefix=$prefix --host=$target --with-gmp-libdir=$prefix/lib --with-gmp-includedir=$prefix/include
 
 make
 """
