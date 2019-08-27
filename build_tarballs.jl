@@ -19,7 +19,6 @@ script = raw"""
 # Build GMP
 cd $WORKSPACE/srcdir/gmp-*
 
-# Patch `configure` to include `$LDFLAGS` in its tests.  This is necessary on FreeBSD.
 update_configure_scripts
 
 if [ $target = "x86_64-apple-darwin14" ]; then
@@ -52,7 +51,6 @@ fi
 mv configure.in configure.ac
 autoreconf -i
 
-
 CXXFLAGS="-std=c++03"; export CXXFLAGS
 
 ./configure --prefix=$prefix --with-gmp-includedir=$prefix/include --with-gmp-libdir=$prefix/lib --host=$target lt_cv_deplibs_check_method=pass_all 
@@ -63,10 +61,6 @@ mkdir $prefix/bin
 cp sdpa_gmp $prefix/bin/sdpa_gmp
 cp COPYING $prefix/bin/COPYING
 """
-
-
-# platforms are restricted by libcxxwrap-julia, which requires gcc7 or gcc8
-# and hence will not work with the official binaries for windows (which uses gcc4)
 
 platforms = Platform[
    MacOS(:x86_64),
