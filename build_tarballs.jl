@@ -20,16 +20,13 @@ script = raw"""
 cd $WORKSPACE/srcdir/gmp-*
 
 # Patch `configure` to include `$LDFLAGS` in its tests.  This is necessary on FreeBSD.
-# atomic_patch -p1 ${WORKSPACE}/srcdir/patches/configure.patch
-# Include Julia-carried patches
-# atomic_patch -p1 ${WORKSPACE}/srcdir/patches/gmp_alloc_overflow_func.patch
-# atomic_patch -p1 ${WORKSPACE}/srcdir/patches/gmp-exception.patch
 update_configure_scripts
 
 if [ $target = "x86_64-apple-darwin14" ]; then
   # seems static linking requires apple's ar
   export AR=/opt/x86_64-apple-darwin14/bin/x86_64-apple-darwin14-ar
 fi
+
 flags=(--enable-cxx --disable-shared --enable-static --with-pic)
 
 # On x86_64 architectures, build fat binary
@@ -38,7 +35,7 @@ if [[ ${proc_family} == intel ]]; then
 fi
 
 ./configure --prefix=$prefix --build=x86_64-linux-gnu --host=$target  ${flags[@]}
-make -j3
+make
 make install
 
 # Build SDPA-GMP
@@ -57,13 +54,10 @@ autoreconf -i
 
 
 CXXFLAGS="-std=c++03"; export CXXFLAGS
-#CPPFLAGS="-std=c++03"; export CPPFLAGS
-#CFLAGS="-I$prefix/include"; export CFLAGS
-#LDFLAGS="-L$prefix/lib"; export LDFLAGS
 
 ./configure --prefix=$prefix --with-gmp-includedir=$prefix/include --with-gmp-libdir=$prefix/lib --host=$target lt_cv_deplibs_check_method=pass_all 
 
-make -j3
+make
 
 mkdir $prefix/bin
 cp sdpa_gmp $prefix/bin/sdpa_gmp
@@ -77,11 +71,7 @@ cp COPYING $prefix/bin/COPYING
 platforms = Platform[
    MacOS(:x86_64),
    Linux(:x86_64),
-    #Windows(:x86_64)
-    #MacOS(:x86_64, compiler_abi=CompilerABI(:gcc8, :cxx10)),
-    #Linux(:x86_64, compiler_abi=CompilerABI(:gcc7, :cxx11)),
-    #Linux(:x86_64, compiler_abi=CompilerABI(:gcc8, :cxx11)),
-    #Windows(:x86_64, compiler_abi=CompilerABI(:gcc8, :cxx11)),
+   # Windows(:x86_64), # doesn't work :(
 ]
 
 # The products that we will ensure are always built
@@ -91,9 +81,7 @@ products(prefix) = [
 ]
 
 # Dependencies that must be installed before this package can be built
-dependencies = [
-    
-]
+dependencies = []
 
 # Build the tarballs, and possibly a `build.jl` as well.
 build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies)
