@@ -18,23 +18,33 @@ sources = [
 script = raw"""
 # Build GMP
 cd $WORKSPACE/srcdir/gmp-*
+
 # Patch `configure` to include `$LDFLAGS` in its tests.  This is necessary on FreeBSD.
-atomic_patch -p1 ${WORKSPACE}/srcdir/patches/configure.patch
+# atomic_patch -p1 ${WORKSPACE}/srcdir/patches/configure.patch
 # Include Julia-carried patches
-atomic_patch -p1 ${WORKSPACE}/srcdir/patches/gmp_alloc_overflow_func.patch
-atomic_patch -p1 ${WORKSPACE}/srcdir/patches/gmp-exception.patch
-flags=(--enable-cxx --disable-shared --enable-static)
+# atomic_patch -p1 ${WORKSPACE}/srcdir/patches/gmp_alloc_overflow_func.patch
+# atomic_patch -p1 ${WORKSPACE}/srcdir/patches/gmp-exception.patch
+update_configure_scripts
+
+if [ $target = "x86_64-apple-darwin14" ]; then
+  # seems static linking requires apple's ar
+  export AR=/opt/x86_64-apple-darwin14/bin/x86_64-apple-darwin14-ar
+fi
+flags=(--enable-cxx --disable-shared --enable-static --with-pic)
+
 # On x86_64 architectures, build fat binary
 if [[ ${proc_family} == intel ]]; then
     flags+=(--enable-fat)
 fi
-./configure --prefix=$prefix --host=$target ${flags[@]}
-make
+
+./configure --prefix=$prefix --build=x86_64-linux-gnu --host=$target  ${flags[@]}
+make -j3
 make install
 
 # Build SDPA-GMP
 
 cd $WORKSPACE/srcdir/sdpa-gmp-7.1.3/
+
 update_configure_scripts
 
 if [ $target = "x86_64-apple-darwin14" ]; then
@@ -42,14 +52,18 @@ if [ $target = "x86_64-apple-darwin14" ]; then
   export AR=/opt/x86_64-apple-darwin14/bin/x86_64-apple-darwin14-ar
 fi
 
-CXXFLAGS="-I$prefix/include"; export CXXFLAGS
-CPPFLAGS="-I$prefix/include"; export CPPFLAGS
-CFLAGS="-I$prefix/include"; export CFLAGS
-LDFLAGS="-L$prefix/lib"; export LDFLAGS
+mv configure.in configure.ac
+autoreconf -i
 
-./configure --prefix=$prefix --host=$target lt_cv_deplibs_check_method=pass_all  --disable-shared --enable-static
 
-make
+CXXFLAGS="-std=c++03"; export CXXFLAGS
+#CPPFLAGS="-std=c++03"; export CPPFLAGS
+#CFLAGS="-I$prefix/include"; export CFLAGS
+#LDFLAGS="-L$prefix/lib"; export LDFLAGS
+
+./configure --prefix=$prefix --with-gmp-includedir=$prefix/include --with-gmp-libdir=$prefix/lib --host=$target lt_cv_deplibs_check_method=pass_all 
+
+make -j3
 
 mkdir $prefix/bin
 cp sdpa_gmp $prefix/bin/sdpa_gmp
@@ -61,10 +75,13 @@ cp COPYING $prefix/bin/COPYING
 # and hence will not work with the official binaries for windows (which uses gcc4)
 
 platforms = Platform[
-    MacOS(:x86_64, compiler_abi=CompilerABI(:gcc7)),
-    MacOS(:x86_64, compiler_abi=CompilerABI(:gcc8)),
-    Linux(:x86_64, compiler_abi=CompilerABI(:gcc7, :cxx11)),
-    Linux(:x86_64, compiler_abi=CompilerABI(:gcc8, :cxx11)),
+   MacOS(:x86_64),
+   Linux(:x86_64),
+    #Windows(:x86_64)
+    #MacOS(:x86_64, compiler_abi=CompilerABI(:gcc8, :cxx10)),
+    #Linux(:x86_64, compiler_abi=CompilerABI(:gcc7, :cxx11)),
+    #Linux(:x86_64, compiler_abi=CompilerABI(:gcc8, :cxx11)),
+    #Windows(:x86_64, compiler_abi=CompilerABI(:gcc8, :cxx11)),
 ]
 
 # The products that we will ensure are always built
