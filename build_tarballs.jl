@@ -71,7 +71,6 @@ platforms = Platform[
 # The products that we will ensure are always built
 products(prefix) = [
     ExecutableProduct(prefix, "sdpa_gmp", :sdpa_gmp),
-    LibraryProduct(prefix, "libgmp", :libgmp)
 ]
 
 # Dependencies that must be installed before this package can be built
