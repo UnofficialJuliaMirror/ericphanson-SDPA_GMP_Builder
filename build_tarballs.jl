@@ -3,12 +3,12 @@
 using BinaryBuilder
 
 name = "SDPABuilder"
-version = v"7.1.3"
+version = v"7.1.3-patched"
 
 # Collection of sources required to build SDPABuilder
 sources = [
-    "https://sourceforge.net/projects/sdpa/files/sdpa-gmp/sdpa-gmp-7.1.3.src.20150320.tar.gz" =>
-    "65591cfba18afe710508023cd0c4a9d36ca8c56a7dd312d1cf4fc962c7b90df4",
+    "https://github.com/ericphanson/sdpa-gmp/archive/v7.1.3-patched.tar.gz" =>
+    "0887d68dd62afaa1c0f61bb42483158c730c79ecb584559bafb99283913a32ec",
     "https://gmplib.org/download/gmp/gmp-6.1.2.tar.bz2" =>
     "5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2",
     "./bundled"
@@ -39,7 +39,7 @@ make install
 
 # Build SDPA-GMP
 
-cd $WORKSPACE/srcdir/sdpa-gmp-7.1.3/
+cd $WORKSPACE/srcdir/sdpa-gmp-7.1.3-patched/
 
 update_configure_scripts
 
