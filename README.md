@@ -1,6 +1,6 @@
 # SDPABuilder
 
-[![Build Status](https://travis-ci.org/ericphanson/SDPA_GMP_Builder.svg?branch=master)](https://travis-ci.org/ericphanson/SDPA_GMP_Builder)
+[![Build Status](https://travis-ci.com/ericphanson/SDPA_GMP_Builder.svg?branch=master)](https://travis-ci.com/ericphanson/SDPA_GMP_Builder)
 
 This repository builds binary artifacts for [SDPA-GMP](http://sdpa.sourceforge.net/).
 Binary artifacts are automatically uploaded to
