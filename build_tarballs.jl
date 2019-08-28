@@ -10,8 +10,7 @@ sources = [
     "https://github.com/ericphanson/sdpa-gmp/archive/v7.1.3-patched.tar.gz" =>
     "0887d68dd62afaa1c0f61bb42483158c730c79ecb584559bafb99283913a32ec",
     "https://gmplib.org/download/gmp/gmp-6.1.2.tar.bz2" =>
-    "5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2",
-    "./bundled"
+    "5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2"
 ]
 
 # Bash recipe for building across all platforms
