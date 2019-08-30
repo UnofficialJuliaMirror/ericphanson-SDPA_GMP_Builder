@@ -3,7 +3,7 @@
 using BinaryBuilder
 
 name = "SDPABuilder"
-version = v"7.1.3-patched"
+version = v"7.1.3-patch-2"
 
 # Collection of sources required to build SDPABuilder
 sources = [
