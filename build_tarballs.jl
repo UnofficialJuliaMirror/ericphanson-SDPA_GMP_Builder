@@ -7,8 +7,8 @@ version = v"7.1.3-patched"
 
 # Collection of sources required to build SDPABuilder
 sources = [
-    "https://github.com/ericphanson/sdpa-gmp/archive/v7.1.3-patched.tar.gz" =>
-    "0887d68dd62afaa1c0f61bb42483158c730c79ecb584559bafb99283913a32ec",
+    "https://github.com/ericphanson/sdpa-gmp/archive/v7.1.3-patch-2.tar.gz" =>
+    "198cf7449ae751911f40b501f4b9a4e87c5cefd0110442067e16d6c212d996ea",
     "https://gmplib.org/download/gmp/gmp-6.1.2.tar.bz2" =>
     "5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2"
 ]
@@ -38,7 +38,7 @@ make install
 
 # Build SDPA-GMP
 
-cd $WORKSPACE/srcdir/sdpa-gmp-7.1.3-patched/
+cd $WORKSPACE/srcdir/sdpa-gmp-*/
 
 update_configure_scripts
 
