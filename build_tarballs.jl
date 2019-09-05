@@ -2,8 +2,8 @@
 # `julia build_tarballs.jl --help` to see a usage message.
 using BinaryBuilder
 
-name = "SDPA_GMP_Builder"
-version = v"7.1.3"
+name = "SDPA_GMP-QD-DD_Builder"
+version = v"7.1.2"
 
 # Collection of sources required to build SDPABuilder
 sources = [
