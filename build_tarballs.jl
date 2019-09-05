@@ -11,10 +11,10 @@ sources = [
     "198cf7449ae751911f40b501f4b9a4e87c5cefd0110442067e16d6c212d996ea",
     "https://gmplib.org/download/gmp/gmp-6.1.2.tar.bz2" =>
     "5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2",
-    "https://github.com/ericphanson/sdpa-qd/archive/v7.1.2.tar.gz" =>
-    "e8d8d52168fc8b9c07e724221e02bfd6e436bd8f89939cfec13a00e9e4a4f916",
-    "https://github.com/ericphanson/sdpa-dd/archive/v7.1.2.tar.gz" =>
-    "8e246a40c7b43b63016522f71611cba7dad1768dd78c6f65be5d8385110ef8ef",
+    "https://github.com/ericphanson/sdpa-qd/archive/qd-v7.1.2.tar.gz" =>
+    "c3c0d9b2b223a5ec194871eaa7ba7b88430decf98a5aea364e3e744dc9a93b97",
+    "https://github.com/ericphanson/sdpa-dd/archive/dd-v7.1.2.tar.gz" =>
+    "acdf51a74cfcbf8eff2e66a28f5a61441197b5b71c350527b6a99cbd22aa7ea3",
 ]
 
 # Bash recipe for building across all platforms
