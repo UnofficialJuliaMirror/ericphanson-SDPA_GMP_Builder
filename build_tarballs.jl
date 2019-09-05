@@ -122,7 +122,7 @@ products(prefix) = [
 ]
 
 # Dependencies that must be installed before this package can be built
-dependencies = [ "https://github.com/ericphanson/QD_Builder/releases/download/v2.3.22/build_QD.v2.3.22.jl",
+dependencies = [ "https://github.com/ericphanson/QD_Builder/releases/download/v2.3.22/build_QD.v2.3.22.jl" ]
 
 
 # Build the tarballs, and possibly a `build.jl` as well.
