@@ -119,6 +119,9 @@ products(prefix) = [
     ExecutableProduct(prefix, "sdpa_gmp", :sdpa_gmp),
     ExecutableProduct(prefix, "sdpa_qd", :sdpa_qd),
     ExecutableProduct(prefix, "sdpa_dd", :sdpa_dd),
+    LibraryProduct(prefix, "libqd_f_main", :libqd_f_main),
+    LibraryProduct(prefix, "libqdmod", :libqdmod),
+    LibraryProduct(prefix, "libqd", :libqd)
 ]
 
 # Dependencies that must be installed before this package can be built
